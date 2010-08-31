@@ -1,0 +1,11 @@
+*~
+*.pyc
+
+# in case you've used rst2html to render it:
+/README.html
+
+# virtualenv directories on a development setup:
+/bin
+/include
+/lib
+
