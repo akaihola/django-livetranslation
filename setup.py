@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name = 'django-livetranslation',
     version = '0.1',
-    packages = ['livetranslation'],
+    packages = ['livetranslation', 'livetranslation.templatetags'],
     author = 'Antti Kaihola',
     author_email = 'akaihol+django@ambitone.com',
     description = ('Edit translations of a site UI on the site itself'),

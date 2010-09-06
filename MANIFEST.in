@@ -1,0 +1,3 @@
+include livetranslation/media/css/*.css
+include livetranslation/media/js/*.js
+include livetranslation/media/img/*.png
