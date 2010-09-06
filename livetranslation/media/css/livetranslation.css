@@ -1,0 +1,100 @@
+#livetranslation-opener {
+    display: none;
+    position: absolute;
+    background: url(/img/translate-icon-by-misterbisson.png) no-repeat;
+    width: 20px;
+    height: 20px;
+    -webkit-box-shadow: 5px 5px 15px;
+    -moz-box-shadow: 5px 5px 15px;
+    box-shadow: 5px 5px 15px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#livetranslation-popup {
+    display: none;
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    -webkit-box-shadow: 3px 3px 20px;
+    -moz-box-shadow: 3px 3px 20px;
+    box-shadow: 3px 3px 20px;
+    background: white;
+    padding: 5px;
+    overflow: auto;
+}
+
+#livetranslation-popup-singular, #livetranslation-popup-plural {
+    border: inset #888 1px;
+    background: #ccc;
+    padding: 5px; }
+
+#livetranslation-popup-singular {
+    margin-bottom: 5px;
+}
+
+#livetranslation-popup label {
+    display: block;
+    clear: left;
+    float: left;
+    margin: 2px;
+    padding: 0 0 0 0;
+    width: 25px;
+    height: 20px;
+    text-align: center;
+}
+
+#livetranslation-popup input {
+    display: block;
+    margin: 0 0 0 35px;
+    width: 230px;
+    height: 20px;
+}
+
+.livetranslation-lang-fi {
+    color: #003580; /* blue */
+    background: #fff; /* white */
+    border: solid #003580 1px; /* blue */
+}
+
+.livetranslation-lang-sv {
+    color: #fecb00; /* yellow */
+    background: #005293; /* blue */
+    border: solid #005293 1px; /* blue */
+}
+
+.livetranslation-lang-en {
+    color: #cf142b; /* red */
+    background: #00247d; /* blue */
+    border: solid #fff 1px; /* white */
+    text-shadow: 0px 0px 1px #fff;
+    xfilter: dropshadow(color=white, offx=0, offy=0);
+}
+
+#livetranslation-popup-close {
+    position: relative;
+    left: 282px;
+    margin-bottom: 5px;
+    width: 16px;
+    height: 16px;
+    color: white;
+    background: red;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#livetranslation-popup-close:before {
+    content: "X";
+}
+
+#livetranslation-popup-close:hover {
+    border: outset #400 2px;
+    margin: -2px -2px 3px -2px;
+}

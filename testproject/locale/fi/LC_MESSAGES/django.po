@@ -1,0 +1,29 @@
+# Finnish translations for the django-livetranslation test project
+# Copyright (C) 2010 Antti Kaihola
+# This file is distributed under the same license as the django-livetranslation package.
+# Antti Kaihola <akaihol+django@ambitone.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-09-06 06:49-0500\n"
+"PO-Revision-Date: 2010-09-06 14:35+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: testapp/views.py:9
+msgid "This is the value of context['translated']."
+msgstr "Tämä on context['translated'] -muuttujan arvo."
+
+#: testapp/templates/testapp/frontpage.html:8
+msgid "This text is translated using the 'trans' template tag."
+msgstr "Tämä teksti on käännetty 'trans' -templatetagin avulla."
+
+#: testapp/templates/testapp/frontpage.html:9
+msgid "This text is translated using the 'blocktrans' template tag."
+msgstr "Tämä teksti on käännetty 'blocktrans' -templatetagin avulla."

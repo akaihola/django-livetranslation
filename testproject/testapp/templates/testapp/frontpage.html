@@ -1,0 +1,12 @@
+{% load livetranslation_tags %}<!doctype html>
+<html>
+    <head>
+        <title>django-livetranslation test page</title>
+    </head>
+    <body>
+{{ translated }}
+{% trans "This text is translated using the 'trans' template tag." %}
+{% blocktrans %}This text is translated using the 'blocktrans' template tag.{% endblocktrans %}
+    </body>
+</html>
+
