@@ -2,14 +2,15 @@ from setuptools import setup
 
 setup(
     name = 'django-livetranslation',
-    version = '0.1',
+    version = '0.2',
     packages = ['livetranslation', 'livetranslation.templatetags'],
     author = 'Antti Kaihola',
     author_email = 'akaihol+django@ambitone.com',
     description = ('Edit translations of a site UI on the site itself'),
     url = 'http://github.com/akaihola/django-livetranslation/tree/master',
-    download_url = ('http://www.github.com/akaihola/django-livetranslation/'
-                    'tarball/0.1'),
+    download_url = (
+        'http://github.com/downloads/akaihola'
+        '/django-livetranslation/django-livetranslation.0.2.tar.gz'),
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Framework :: Django',

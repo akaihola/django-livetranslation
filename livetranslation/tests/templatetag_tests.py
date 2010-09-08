@@ -6,8 +6,8 @@ from django.template import Template, Context
 class Trans_Tests(TestCase):
     """Tests for the {% trans %} template tag"""
 
-    def test_mungle_mungle(self):
-        """Mungle mungle"""
+    def test_marks_up_translations(self):
+        """The {% trans %} tag marks up translations"""
         template = ('{% load livetranslation_tags %}'
                     '{% trans "Text" %} '
                     '{% blocktrans with myvar as value %}'
@@ -16,7 +16,22 @@ class Trans_Tests(TestCase):
         rendered = Template(template).render(Context({'myvar': 'value'}))
         self.assertEqual(
             rendered,
-            u'<span id="livetranslate-0">Text</span>'
+            u'[livetranslation-id 0/]'
+            u'[livetranslation-singular]Text[/livetranslation-singular]'
+            u'[livetranslation-plural][/livetranslation-plural]'
+            u'[livetranslation-msgstr]Text[/livetranslation-msgstr] '
+            u'[livetranslation-id 1/]'
+            u'[livetranslation-singular]'
+            u'A "dangerous" </script> %(value)s'
+            u'[/livetranslation-singular]'
+            u'[livetranslation-plural][/livetranslation-plural]'
+            u'[livetranslation-msgstr]'
+            u'A "dangerous" </script> value'
+            u'[/livetranslation-msgstr]')
+
+        # todo: move this to middleware tests
+        """
+        u'<span id="livetranslate-0">Text</span>'
             u'<script type="text/javascript">'
             u'jQuery("#livetranslate-0").livetranslate("Text", "");'
             u'</script> '
@@ -26,3 +41,4 @@ class Trans_Tests(TestCase):
             u'jQuery("#livetranslate-1").livetranslate('
             u'"A "dangerous" </script> %(value)s", ""'
             u');</script>')
+            """

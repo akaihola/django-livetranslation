@@ -1,28 +1,17 @@
 from django.utils.functional import lazy
-from django.utils.safestring import mark_safe
 from django.utils.translation import (ugettext as django_ugettext,
-                                      ungettext as django_ungettext,
-                                      get_language)
-from livetranslation.markup import TRANSLATION_ITEM_HTML, get_next_counter_value
-
-
+                                      ungettext as django_ungettext)
+from livetranslation.markup import mark_translation
 
 
 def ugettext(message):
-    return TRANSLATION_ITEM_HTML % {
-        'id': 'livetranslate-%d' % get_next_counter_value(),
-        'msgstr': django_ugettext(message),
-        'msgid': message,
-        'msgid_plural': u''}
+    return mark_translation(message, u'', django_ugettext(message))
 
 
 def ungettext(singular, plural, number):
-    return TRANSLATION_ITEM_HTML % {
-        'id': 'livetranslate-%d' % get_next_counter_value(),
-        'msgstr': django_ungettext(singular, plural, number),
-        'msgid': singular,
-        'msgid_plural': plural}
+    return mark_translation(singular, plural,
+                            django_ungettext(singular, plural, number))
 
 
-ungettext_lazy = lazy(ungettext, unicode)
-ugettext_lazy = lazy(ugettext, unicode)
+ungettext_lazy = lazy(ungettext, unicode)  # pragma: no cover
+ugettext_lazy = lazy(ugettext, unicode)    # pragma: no cover

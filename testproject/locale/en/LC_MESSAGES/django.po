@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-livetranslation-testproject 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-06 06:49-0500\n"
-"PO-Revision-Date: 2010-09-06 14:30+0200\n"
+"POT-Creation-Date: 2010-09-08 08:24-0500\n"
+"PO-Revision-Date: 2010-09-08 16:24+0300\n"
 "Last-Translator: Antti Kaihola <akaihol+django@ambitone.com>\n"
 "Language-Team: English <akaihol+django@ambitone.com>\n"
 "MIME-Version: 1.0\n"
@@ -26,3 +26,7 @@ msgstr "This text is translated using the 'trans' template tag."
 #: testapp/templates/testapp/frontpage.html:9
 msgid "This text is translated using the 'blocktrans' template tag."
 msgstr "This text is translated using the 'blocktrans' template tag."
+
+#: testapp/templates/testapp/frontpage.html:10
+msgid "This text is inside a tag attribute value."
+msgstr "This text is inside a tag attribute value."

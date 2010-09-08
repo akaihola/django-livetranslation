@@ -46,5 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'livetranslation',
     'testapp',
-    'django_extensions',  # for development
+    #'django_extensions',  # for development
 )
+
+TEST_RUNNER = 'django-test-coverage.runner.run_tests'

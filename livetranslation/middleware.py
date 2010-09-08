@@ -4,8 +4,7 @@ from django.utils.translation import get_language, activate, trans_real
 import gettext
 import re
 
-from livetranslation.markup import (
-    initialize_counter, TRANSLATION_ITEM_ESCAPED_REGEX)
+from livetranslation.markup import initialize, render_translations
 
 
 DEFAULT_JQUERY_PATTERN = r'.*/jquery(?:-[\d.]+)?(?:\.min)?\.js'
@@ -17,16 +16,16 @@ DEFAULT_PLUGIN_URL = '/static/js/jquery.livetranslation.js'
 SCRIPT_PATTERN_TEMPLATE = r'<script\s[^>]*src="%s"'
 
 
-def unescape(html):
-    """
-    Returns the given HTML with ampersands, quotes and angle brackets decoded.
-    """
-    return (html
-            .replace('&amp;', '&')
-            .replace('&lt;', '<')
-            .replace('&gt;', '>')
-            .replace('&quot;', '"')
-            .replace('&#39;', "'"))
+#def unescape(html):
+#    """
+#    Returns the given HTML with ampersands, quotes and angle brackets decoded.
+#    """
+#    return (html
+#            .replace('&amp;', '&')
+#            .replace('&lt;', '<')
+#            .replace('&gt;', '>')
+#            .replace('&quot;', '"')
+#            .replace('&#39;', "'"))
 
 
 def process_jquery_setting():
@@ -76,7 +75,7 @@ def insert_jquery_link(html):
 class LiveTranslationMiddleware:
     def process_request(self, request):
         if getattr(settings, 'LIVETRANSLATION', False):
-            initialize_counter()
+            initialize()
             active_language = get_language()
             trans_real._active.clear()
             trans_real._translations.clear()
@@ -87,7 +86,5 @@ class LiveTranslationMiddleware:
         if getattr(settings, 'LIVETRANSLATION', False):
             if not find_jquery_link(response.content):
                 response.content = insert_jquery_link(response.content)
-            response.content = re.sub(TRANSLATION_ITEM_ESCAPED_REGEX,
-                                      lambda match: unescape(match.group()),
-                                      response.content)
+            response.content = render_translations(response.content)
         return response

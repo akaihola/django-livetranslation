@@ -1,4 +1,6 @@
 from django.test import TestCase
+from mock import Mock, patch
+
 from livetranslation.middleware import (process_jquery_setting,
                                         find_jquery_link,
                                         insert_jquery_link,
@@ -97,6 +99,8 @@ class InsertJqueryLink_Tests(TestCase):
             u'</script>'
             u'<script type="text/javascript"'
             u' src="/static/js/jquery.livetranslation.js"></script>'
+            u'<link rel="stylesheet" type="text/css"'
+            u' href="/static/css/livetranslation.css"/>'
             u'</head></html>')
 
     def test_custom(self):
@@ -110,4 +114,6 @@ class InsertJqueryLink_Tests(TestCase):
             u'<script type="text/javascript" src="/jquery.js"></script>'
             u'<script type="text/javascript"'
             u' src="/static/js/jquery.livetranslation.js"></script>'
+            u'<link rel="stylesheet" type="text/css"'
+            u' href="/static/css/livetranslation.css"/>'
             u'</head></html>')

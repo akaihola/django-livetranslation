@@ -12,7 +12,7 @@ def get_translations(request):
     if request.method == 'POST':
         data = extract_form_data(request.POST)
         save_translations(data, PoFileSession())
-        return HttpResponse('OK')
+        return HttpResponse('OK', content_type='text/plain')
     else:
         response = get_all_translations(request.GET['msgid'],
                                         request.GET.get('msgid_plural'))

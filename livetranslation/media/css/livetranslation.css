@@ -1,7 +1,7 @@
 #livetranslation-opener {
     display: none;
     position: absolute;
-    background: url(/img/translate-icon-by-misterbisson.png) no-repeat;
+    background: url(/static/img/translate-icon-by-misterbisson.png) no-repeat;
     width: 20px;
     height: 20px;
     -webkit-box-shadow: 5px 5px 15px;

@@ -1,18 +1,13 @@
 from django.templatetags.i18n import *
 import new
 
-from livetranslation.markup import TRANSLATION_ITEM_HTML, get_next_counter_value
+from livetranslation.markup import mark_translation
 
 
 def wrap_node(node, get_msgid):
     def new_render(self, context):
         singular, plural = get_msgid(context)
-        rendered = TRANSLATION_ITEM_HTML % {
-            'id': 'livetranslate-%d' % get_next_counter_value(),
-            'msgstr': old_render(context),
-            'msgid': singular,
-            'msgid_plural': plural}
-        return rendered
+        return mark_translation(singular, plural, old_render(context))
 
     old_render = node.render
     node.render = new.instancemethod(new_render, node, node.__class__)
