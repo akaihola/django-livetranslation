@@ -48,5 +48,3 @@ INSTALLED_APPS = (
     'testapp',
     #'django_extensions',  # for development
 )
-
-TEST_RUNNER = 'django-test-coverage.runner.run_tests'
