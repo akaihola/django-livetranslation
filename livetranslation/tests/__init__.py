@@ -9,12 +9,12 @@ from livetranslation.tests.markup_tests import (
     ReplaceAttributeTranslation_Tests,
     RenderAttributeTranslations_Tests,
     ReplaceContentTranslation_Tests,
-    RenderContentTranslations_Tests,
-    )
+    RenderContentTranslations_Tests)
 from livetranslation.tests.middleware_tests import (
     ProcessJquerySetting_Tests,
     FindJqueryLink_Tests,
-    InsertJqueryLink_Tests)
+    InsertJqueryLink_Tests,
+    LiveTranslationMiddleware_Tests)
 from livetranslation.tests.templatetag_tests import Trans_Tests
 from livetranslation.tests.translation_tests import (
     GetAllTranslations_Tests, PoFileSession_Tests)

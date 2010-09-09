@@ -15,6 +15,7 @@ DEFAULT_PLUGIN_URL = '/static/js/jquery.livetranslation.js'
 
 SCRIPT_PATTERN_TEMPLATE = r'<script\s[^>]*src="%s"'
 
+_HTML_TYPES = ('text/html', 'application/xhtml+xml')
 
 #def unescape(html):
 #    """
@@ -83,7 +84,9 @@ class LiveTranslationMiddleware:
             activate(active_language)
 
     def process_response(self, request, response):
-        if getattr(settings, 'LIVETRANSLATION', False):
+        if (getattr(settings, 'LIVETRANSLATION', False) and
+            response['Content-Type'].split(';')[0] in _HTML_TYPES):
+
             if not find_jquery_link(response.content):
                 response.content = insert_jquery_link(response.content)
             response.content = render_translations(response.content.decode('UTF-8')).encode('UTF-8')

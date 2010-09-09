@@ -5,7 +5,8 @@ from livetranslation.middleware import (process_jquery_setting,
                                         find_jquery_link,
                                         insert_jquery_link,
                                         DEFAULT_JQUERY_PATTERN,
-                                        DEFAULT_JQUERY_URL)
+                                        DEFAULT_JQUERY_URL,
+                                        LiveTranslationMiddleware)
 from livetranslation.tests.settings_helpers import patch_settings
 
 
@@ -117,3 +118,80 @@ class InsertJqueryLink_Tests(TestCase):
             u'<link rel="stylesheet" type="text/css"'
             u' href="/static/css/livetranslation.css"/>'
             u'</head></html>')
+
+
+class LiveTranslationMiddleware_Tests(TestCase):
+    def test_response_non_html(self):
+        class MockResponse(dict):
+            pass
+        response = MockResponse()
+        response.content = 'some binary data with <head></head>'
+        response['Content-Type'] = 'application/x-binary-data'
+        result = LiveTranslationMiddleware().process_response(
+            'dummy request', response)
+        self.assertEqual(result.content, response.content)
+
+    def test_response_html(self):
+        class MockResponse(dict):
+            pass
+        response = MockResponse()
+        response.content = '<html><head></head></html>'
+        response['Content-Type'] = 'text/html'
+        result = LiveTranslationMiddleware().process_response(
+            'dummy request', response)
+        self.assertEqual(
+            result.content,
+            '<html><head>'
+            '<script type="text/javascript"'
+            ' src="http://ajax.googleapis.com'
+            '/ajax/libs/jquery/1.4.2/jquery.min.js">'
+            '</script>'
+            '<script type="text/javascript"'
+            ' src="/static/js/jquery.livetranslation.js"></script>'
+            '<link rel="stylesheet" type="text/css"'
+            ' href="/static/css/livetranslation.css"/>'
+            '</head></html>')
+
+    def test_response_xhtml(self):
+        class MockResponse(dict):
+            pass
+        response = MockResponse()
+        response.content = '<html><head></head></html>'
+        response['Content-Type'] = 'application/xhtml+xml'
+        result = LiveTranslationMiddleware().process_response(
+            'dummy request', response)
+        self.assertEqual(
+            result.content,
+            '<html><head>'
+            '<script type="text/javascript"'
+            ' src="http://ajax.googleapis.com'
+            '/ajax/libs/jquery/1.4.2/jquery.min.js">'
+            '</script>'
+            '<script type="text/javascript"'
+            ' src="/static/js/jquery.livetranslation.js"></script>'
+            '<link rel="stylesheet" type="text/css"'
+            ' href="/static/css/livetranslation.css"/>'
+            '</head></html>')
+
+    def test_sets_content_length(self):
+        """livetranslation response middleware resets existing content length"""
+        class MockResponse(dict):
+            pass
+        response = MockResponse()
+        response.content = '<html><head></head></html>'
+        response['Content-Type'] = 'application/xhtml+xml'
+        response['Content-Length'] = len(response.content)
+        result = LiveTranslationMiddleware().process_response(
+            'dummy request', response)
+        self.assertEqual(result['Content-Length'], 298)
+
+    def test_does_not_set_missing_content_length(self):
+        """livetranslation response middleware leaves content length unset"""
+        class MockResponse(dict):
+            pass
+        response = MockResponse()
+        response.content = '<html><head></head></html>'
+        response['Content-Type'] = 'application/xhtml+xml'
+        result = LiveTranslationMiddleware().process_response(
+            'dummy request', response)
+        self.assertTrue('Content-Length' not in result)
