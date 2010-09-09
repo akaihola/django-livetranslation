@@ -120,7 +120,7 @@ class PoFileSession_Tests(TestCase):
         session = PoFileSession()
         d = self.root_directories
         self.assertEqual(
-            session.paths,
+            [os.path.abspath(path) for path in session.paths],
             ['%(lt)s/testproject/locale/%%s/LC_MESSAGES/django.po' % d,
              '%(lt)s/testproject/testapp/locale/%%s/LC_MESSAGES/django.po' % d,
              '%(lt)s/livetranslation/locale/%%s/LC_MESSAGES/django.po' % d,
@@ -133,7 +133,8 @@ class PoFileSession_Tests(TestCase):
         """PoFileSession generates a complete set of paths for .po files"""
         session = PoFileSession()
         d = self.root_directories
-        files = list(session.pofile_paths_for_language('xx'))
+        files = [os.path.abspath(filepath)
+                 for filepath in session.pofile_paths_for_language('xx')]
         self.assertEqual(
             files,
             ['%(lt)s/testproject/locale/xx/LC_MESSAGES/django.po' % d,
