@@ -9,8 +9,7 @@ setup(
     description = ('Edit translations of a site UI on the site itself'),
     url = 'http://github.com/akaihola/django-livetranslation/tree/master',
     download_url = (
-        'http://github.com/downloads/akaihola'
-        '/django-livetranslation/django-livetranslation.0.2.tar.gz'),
+        'http://github.com/downloads/akaihola/django-livetranslation'),
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
