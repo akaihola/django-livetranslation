@@ -89,5 +89,9 @@ class LiveTranslationMiddleware:
 
             if not find_jquery_link(response.content):
                 response.content = insert_jquery_link(response.content)
-            response.content = render_translations(response.content.decode('UTF-8')).encode('UTF-8')
+            response.content = render_translations(
+                response.content.decode('UTF-8')).encode('UTF-8')
+            if response.get('Content-Length', None):
+                response['Content-Length'] = len(response.content)
+
         return response
