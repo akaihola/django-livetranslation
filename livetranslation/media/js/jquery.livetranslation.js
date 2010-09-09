@@ -144,11 +144,6 @@
     /* Attach elements to page after page has been loaded */
 
     $(function() {
-        $('<link>').appendTo('head').attr({
-            rel: 'stylesheet',
-            type: 'text/css',
-            href: '/static/css/livetranslation.css'
-        });
         dom.opener.appendTo('body')
         dom.popup.appendTo('body');
     });
