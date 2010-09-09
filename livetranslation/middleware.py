@@ -86,5 +86,5 @@ class LiveTranslationMiddleware:
         if getattr(settings, 'LIVETRANSLATION', False):
             if not find_jquery_link(response.content):
                 response.content = insert_jquery_link(response.content)
-            response.content = render_translations(response.content)
+            response.content = render_translations(response.content.decode('UTF-8')).encode('UTF-8')
         return response
