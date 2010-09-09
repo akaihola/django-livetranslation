@@ -5,7 +5,7 @@ import threading
 
 
 def initialize():
-    _thread_locals.livetranslation = {'items': []}
+    _thread_locals.livetranslation = {'items': {}}
 
 
 _thread_locals = threading.local()
@@ -39,10 +39,21 @@ def get_translation_item_markup(counter, singular, plural, msgstr):
 
 
 def mark_translation(singular, plural, msgstr):
+    """Returns intermediate mark-up, puts translation details in threadlocals"""
     items = _thread_locals.livetranslation['items']
     counter = len(items)
-    items.append((singular, plural, msgstr))
+    items[str(counter)] = {'singular': singular,
+                           'plural': plural,
+                           'msgstr': msgstr}
     return get_translation_item_markup(counter, singular, plural, msgstr)
+
+
+def get_stored_translations():
+    return _thread_locals.livetranslation['items']
+
+
+def get_stored_translation(counter):
+    return get_stored_translations()[str(counter)]
 
 
 def markup_to_regex():
@@ -93,12 +104,13 @@ TRANSLATED_ATTRIBUTE_HTML = ('<%(tag)s'
 def replace_attribute_translation(match):
     (tag, attrs1, attribute, assignment, counter, singular, plural, msgstr, attrs2
      )= match.groups()
+    stored_data = get_stored_translation(counter)
     elem_id = get_id_attr(attrs1) or get_id_attr(attrs2)
     if not elem_id:
         elem_id = 'livetranslation-%s' % counter
         attrs1 = ' id="%s"%s' % (elem_id, attrs1)
     script = render_translation_item_script(
-        elem_id, singular, plural, attribute)
+        elem_id, stored_data['singular'], stored_data['plural'], attribute)
     return TRANSLATED_ATTRIBUTE_HTML % locals()
 
 
@@ -112,8 +124,10 @@ TRANSLATED_CONTENT_HTML = u'<span id="%(id)s">%(msgstr)s</span>'
 def replace_content_translation(match):
     """Replaces a regex match of intermediate markup with HTML+script"""
     counter, singular, plural, msgstr = match.groups()
+    stored_data = get_stored_translation(counter)
     elem_id = 'livetranslation-%s' % counter
-    script = render_translation_item_script(elem_id, singular, plural, '_html')
+    script = render_translation_item_script(
+        elem_id, stored_data['singular'], stored_data['plural'], '_html')
     return '%s%s' % (
         TRANSLATED_CONTENT_HTML % {'id': elem_id, 'msgstr': msgstr},
         script)

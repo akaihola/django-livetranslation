@@ -2,8 +2,11 @@ from mock import Mock, patch
 import re
 from unittest import TestCase
 
-from livetranslation.markup import (get_translation_item_markup,
+from livetranslation.markup import (initialize,
+                                    get_translation_item_markup,
                                     mark_translation,
+                                    get_stored_translations,
+                                    get_stored_translation,
                                     markup_to_regex,
                                     get_attribute_translation_regex,
                                     replace_attribute_translation,
@@ -29,7 +32,8 @@ class GetTranslationItemMarkup_Tests(TestCase):
 class MarkTranslation_Tests(TestCase):
     """Tests for mark_translation()"""
 
-    def test_x(self):
+    def test_returns_correct_markup(self):
+        """mark_translation returns correct mark-up"""
         marked = mark_translation('singular', 'plural', 'msgstr')
         self.assertEqual(
             marked,
@@ -37,6 +41,15 @@ class MarkTranslation_Tests(TestCase):
             '[livetranslation-singular]singular[/livetranslation-singular]'
             '[livetranslation-plural]plural[/livetranslation-plural]'
             '[livetranslation-msgstr]msgstr[/livetranslation-msgstr]')
+
+    def test_stores_details_in_threadlocals(self):
+        """mark_translation stores translation details in threadlocals"""
+        initialize()
+        mark_translation('singular', 'plural', 'msgstr')
+        self.assertEqual(get_stored_translations(),
+                         {'0': {'msgstr': 'msgstr',
+                                'plural': 'plural',
+                                'singular': 'singular'}})
 
 
 class GetAttributeTranslationRegex_Tests(TestCase):
