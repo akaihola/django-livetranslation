@@ -1,4 +1,5 @@
 from mock import Mock, patch
+import re
 from unittest import TestCase
 
 from livetranslation.markup import (get_translation_item_markup,
@@ -66,6 +67,23 @@ class MarkupToRegex_Tests(TestCase):
                    Mock(return_value='[%()%:%()%:%()%:%()%]')):
             regex = markup_to_regex()
         self.assertEqual(regex, r'\[(\d+)\:(.*?)\:(.*?)\:(.*?)\]')
+
+
+class MarkupRegex_Tests(TestCase):
+    """Tests for the default intermediate mark-up regex"""
+
+    def test_multiline(self):
+        """multiline"""
+        markup = (
+            '[livetranslation-id 9/]'
+            '[livetranslation-singular]singular[/livetranslation-singular]'
+            '[livetranslation-plural][/livetranslation-plural]'
+            '[livetranslation-msgstr]'
+            'First line\nSecond line'
+            '[/livetranslation-msgstr]')
+        regex = re.compile(markup_to_regex(), re.S)
+        replaced = re.sub(regex, 'DUMMY', markup)
+        self.assertEqual(replaced, 'DUMMY')
 
 
 class ReplaceAttributeTranslation_Tests(TestCase):

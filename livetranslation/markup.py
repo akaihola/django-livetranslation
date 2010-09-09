@@ -103,7 +103,7 @@ def replace_attribute_translation(match):
 
 
 def render_attribute_translations(html):
-    regex = get_attribute_translation_regex()
+    regex = re.compile(get_attribute_translation_regex(), re.S)
     return re.sub(regex, replace_attribute_translation, html)
 
 
@@ -120,7 +120,7 @@ def replace_content_translation(match):
 
 
 def render_content_translations(html):
-    regex = markup_to_regex()
+    regex = re.compile(markup_to_regex(), re.S)
     return re.sub(regex, replace_content_translation, html)
 
 

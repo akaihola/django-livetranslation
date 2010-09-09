@@ -5,6 +5,7 @@ from livetranslation.tests.markup_tests import (
     MarkTranslation_Tests,
     GetAttributeTranslationRegex_Tests,
     MarkupToRegex_Tests,
+    MarkupRegex_Tests,
     ReplaceAttributeTranslation_Tests,
     RenderAttributeTranslations_Tests,
     ReplaceContentTranslation_Tests,
