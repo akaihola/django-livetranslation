@@ -14,20 +14,8 @@ class Trans_Tests(TestCase):
                     'A "dangerous" </script> {{ value }}'
                     '{% endblocktrans %}')
         rendered = Template(template).render(Context({'myvar': 'value'}))
-        self.assertEqual(
-            rendered,
-            u'[livetranslation-id 0/]'
-            u'[livetranslation-singular]Text[/livetranslation-singular]'
-            u'[livetranslation-plural][/livetranslation-plural]'
-            u'[livetranslation-msgstr]Text[/livetranslation-msgstr] '
-            u'[livetranslation-id 1/]'
-            u'[livetranslation-singular]'
-            u'A "dangerous" </script> %(value)s'
-            u'[/livetranslation-singular]'
-            u'[livetranslation-plural][/livetranslation-plural]'
-            u'[livetranslation-msgstr]'
-            u'A "dangerous" </script> value'
-            u'[/livetranslation-msgstr]')
+        self.assertEqual(rendered,
+                         u'[livetranslation-id 0/] [livetranslation-id 1/]')
 
         # todo: move this to middleware tests
         """

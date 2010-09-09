@@ -22,11 +22,10 @@ class GetTranslationItemMarkup_Tests(TestCase):
 
     def test_substitution(self):
         """substitution"""
-        markup = '[%(id)d:%(singular)s:%(plural)s:%(msgstr)s/]'
+        markup = '[%(id)d/]'
         with patch_settings(LIVETRANSLATION_INTERMEDIATE_MARKUP=markup):
-            markup = get_translation_item_markup(
-                1, 'singular', 'plural', 'msgstr')
-        self.assertEqual(markup, '[1:singular:plural:msgstr/]')
+            markup = get_translation_item_markup(1)
+        self.assertEqual(markup, '[1/]')
 
 
 class MarkTranslation_Tests(TestCase):
@@ -35,12 +34,7 @@ class MarkTranslation_Tests(TestCase):
     def test_returns_correct_markup(self):
         """mark_translation returns correct mark-up"""
         marked = mark_translation('singular', 'plural', 'msgstr')
-        self.assertEqual(
-            marked,
-            '[livetranslation-id 1/]'
-            '[livetranslation-singular]singular[/livetranslation-singular]'
-            '[livetranslation-plural]plural[/livetranslation-plural]'
-            '[livetranslation-msgstr]msgstr[/livetranslation-msgstr]')
+        self.assertEqual(marked, '[livetranslation-id 1/]')
 
     def test_stores_details_in_threadlocals(self):
         """mark_translation stores translation details in threadlocals"""
@@ -58,7 +52,7 @@ class GetAttributeTranslationRegex_Tests(TestCase):
     def test_builds_a_good_regex(self):
         """get_attribute_translation_regex() builds a good regex"""
         with patch('livetranslation.markup.get_translation_item_markup',
-                   Mock(return_value=r'[%()%:%()%:%()%:%()%]')):
+                   Mock(return_value=r'[%()%]')):
             regex = get_attribute_translation_regex()
         self.assertEqual(
             regex,
@@ -67,7 +61,7 @@ class GetAttributeTranslationRegex_Tests(TestCase):
             r'(\b[a-zA-Z]+)'
             r'(\s*=\s*'
             r'(?:[\'\"])?)'
-            r'\[(\d+)\:(.*?)\:(.*?)\:(.*?)\]'
+            r'\[(\d+)\]'
             r'([^>]*?)>')
 
 
@@ -77,9 +71,9 @@ class MarkupToRegex_Tests(TestCase):
     def test_escapes_markup_and_replaces_groups(self):
         """markup_to_regex escapes mark-up and replaces groups"""
         with patch('livetranslation.markup.get_translation_item_markup',
-                   Mock(return_value='[%()%:%()%:%()%:%()%]')):
+                   Mock(return_value='[%()%]')):
             regex = markup_to_regex()
-        self.assertEqual(regex, r'\[(\d+)\:(.*?)\:(.*?)\:(.*?)\]')
+        self.assertEqual(regex, r'\[(\d+)\]')
 
 
 class MarkupRegex_Tests(TestCase):
@@ -87,13 +81,7 @@ class MarkupRegex_Tests(TestCase):
 
     def test_multiline(self):
         """multiline"""
-        markup = (
-            '[livetranslation-id 9/]'
-            '[livetranslation-singular]singular[/livetranslation-singular]'
-            '[livetranslation-plural][/livetranslation-plural]'
-            '[livetranslation-msgstr]'
-            'First line\nSecond line'
-            '[/livetranslation-msgstr]')
+        markup = '[livetranslation-id 9/]'
         regex = re.compile(markup_to_regex(), re.S)
         replaced = re.sub(regex, 'DUMMY', markup)
         self.assertEqual(replaced, 'DUMMY')
@@ -109,9 +97,6 @@ class ReplaceAttributeTranslation_Tests(TestCase):
             'translation',
             '="',
             '0',
-            'singular',
-            'plural',
-            'msgstr',
             '" attr3="val3" /')
         replacement = replace_attribute_translation(match)
         self.assertEqual(
@@ -132,9 +117,6 @@ class ReplaceAttributeTranslation_Tests(TestCase):
             'translation',
             '="',
             '0',
-            'singular',
-            'plural',
-            'msgstr',
             '"/')
         replacement = replace_attribute_translation(match)
         self.assertEqual(
@@ -154,9 +136,6 @@ class ReplaceAttributeTranslation_Tests(TestCase):
             'value',
             '="',
             '0',
-            'singular',
-            'plural',
-            'msgstr',
             '" id="the-id"/')
         replacement = replace_attribute_translation(match)
         self.assertEqual(
@@ -174,14 +153,14 @@ class RenderAttributeTranslations_Tests(TestCase):
              r'(\b[a-zA-Z]+)'
              r'(\s*=\s*'
              r'(?:[\'\"])?)'
-             r'\[(\d+)\:(.*?)\:(.*?)\:(.*?)\]'
+             r'\[(\d+)\]'
              r'([^>]*?)>')
 
     def test_adds_id(self):
         """render_attribute_translations adds a missing element id"""
         html = ('<input'
                 ' type="text"'
-                ' value="[0:singular:plural:msgstr]"'
+                ' value="[0]"'
                 ' size="20" />')
         with patch('livetranslation.markup.get_attribute_translation_regex',
                    Mock(return_value=self.regex)):
@@ -202,7 +181,7 @@ class RenderAttributeTranslations_Tests(TestCase):
         """render_attribute_translations re-uses an existing element id"""
         html = ('<tag'
                 ' id="the-id"'
-                ' translation="[0:singular:plural:msgstr]"/>')
+                ' translation="[0]"/>')
         with patch('livetranslation.markup.get_attribute_translation_regex',
                    Mock(return_value=self.regex)):
             result = render_attribute_translations(html)
@@ -219,7 +198,7 @@ class ReplaceContentTranslation_Tests(TestCase):
     def test_content(self):
         """replace_content_translation"""
         match = Mock()
-        match.groups.return_value = ('0', 'singular', 'plural', 'msgstr')
+        match.group.return_value = '0'
         replacement = replace_content_translation(match)
         self.assertEqual(
             replacement,
@@ -231,11 +210,11 @@ class ReplaceContentTranslation_Tests(TestCase):
 
 
 class RenderContentTranslations_Tests(TestCase):
-    regex = r'\[(\d+)\:(.*?)\:(.*?)\:(.*?)\]'
+    regex = r'\[(\d+)\]'
 
     def test_content(self):
         """render_content_translations renders a translation correctly"""
-        html = '<tag>[0:singular:plural:msgstr]</tag>'
+        html = '<tag>[0]</tag>'
         with patch('livetranslation.markup.markup_to_regex',
                    Mock(return_value=self.regex)):
             result = render_content_translations(html)

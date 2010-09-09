@@ -22,20 +22,12 @@ TRANSLATION_ITEM_SCRIPT = (
 
 # the intermediate translation mark-up should not contain characters which
 # would be escaped by django.utils.html.escape
-DEFAULT_INTERMEDIATE_MARKUP = (
-    '[livetranslation-id %(id)s/]'
-    '[livetranslation-singular]%(singular)s[/livetranslation-singular]'
-    '[livetranslation-plural]%(plural)s[/livetranslation-plural]'
-    '[livetranslation-msgstr]%(msgstr)s[/livetranslation-msgstr]')
+DEFAULT_INTERMEDIATE_MARKUP = '[livetranslation-id %(id)s/]'
 
 
-def get_translation_item_markup(counter, singular, plural, msgstr):
+def get_translation_item_markup(counter):
     return (getattr(settings, 'LIVETRANSLATION_INTERMEDIATE_MARKUP',
-                    DEFAULT_INTERMEDIATE_MARKUP)
-            % {'id': counter,
-               'singular': singular,
-               'plural': plural,
-               'msgstr': msgstr})
+                    DEFAULT_INTERMEDIATE_MARKUP) % {'id': counter})
 
 
 def mark_translation(singular, plural, msgstr):
@@ -45,7 +37,7 @@ def mark_translation(singular, plural, msgstr):
     items[str(counter)] = {'singular': singular,
                            'plural': plural,
                            'msgstr': msgstr}
-    return get_translation_item_markup(counter, singular, plural, msgstr)
+    return get_translation_item_markup(counter)
 
 
 def get_stored_translations():
@@ -58,9 +50,9 @@ def get_stored_translation(counter):
 
 def markup_to_regex():
     delimiter = '%()%'
-    translation_markup = get_translation_item_markup(*4*[delimiter])
+    translation_markup = get_translation_item_markup(delimiter)
     parts = [re.escape(part) for part in translation_markup.split(delimiter)]
-    return r'%s(\d+)%s(.*?)%s(.*?)%s(.*?)%s' % tuple(parts)
+    return r'%s(\d+)%s' % tuple(parts)
 
 
 ATTRIBUTE_TRANSLATION_REGEX_TEMPLATE = (
@@ -102,8 +94,7 @@ TRANSLATED_ATTRIBUTE_HTML = ('<%(tag)s'
                              '%(script)s')
 
 def replace_attribute_translation(match):
-    (tag, attrs1, attribute, assignment, counter, singular, plural, msgstr, attrs2
-     )= match.groups()
+    (tag, attrs1, attribute, assignment, counter, attrs2) = match.groups()
     stored_data = get_stored_translation(counter)
     elem_id = get_id_attr(attrs1) or get_id_attr(attrs2)
     if not elem_id:
@@ -111,6 +102,7 @@ def replace_attribute_translation(match):
         attrs1 = ' id="%s"%s' % (elem_id, attrs1)
     script = render_translation_item_script(
         elem_id, stored_data['singular'], stored_data['plural'], attribute)
+    msgstr = stored_data['msgstr']
     return TRANSLATED_ATTRIBUTE_HTML % locals()
 
 
@@ -123,14 +115,14 @@ TRANSLATED_CONTENT_HTML = u'<span id="%(id)s">%(msgstr)s</span>'
 
 def replace_content_translation(match):
     """Replaces a regex match of intermediate markup with HTML+script"""
-    counter, singular, plural, msgstr = match.groups()
+    counter = match.group(1)
     stored_data = get_stored_translation(counter)
     elem_id = 'livetranslation-%s' % counter
     script = render_translation_item_script(
         elem_id, stored_data['singular'], stored_data['plural'], '_html')
-    return '%s%s' % (
-        TRANSLATED_CONTENT_HTML % {'id': elem_id, 'msgstr': msgstr},
-        script)
+    return '%s%s' % (TRANSLATED_CONTENT_HTML
+                     % {'id': elem_id, 'msgstr': stored_data['msgstr']},
+                     script)
 
 
 def render_content_translations(html):
