@@ -1,5 +1,7 @@
 *~
 *.pyc
+/temp
+
 /.coverage
 
 # in case you've used rst2html to render it:
