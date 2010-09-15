@@ -4,8 +4,16 @@ import new
 from livetranslation.markup import mark_translation
 
 
+def is_enabled(context):
+    from django.conf import settings
+    return (getattr(settings, 'LIVETRANSLATION', False) and
+            context['request'].session.get('livetranslation-enable'))
+
+
 def wrap_node(node, get_msgid):
     def new_render(self, context):
+        if not is_enabled(context):
+            return old_render(context)
         singular, plural = get_msgid(context)
         return mark_translation(singular, plural, old_render(context))
 
@@ -17,10 +25,7 @@ def wrap_node(node, get_msgid):
 django_do_translate = do_translate
 
 def do_translate(parser, token):
-    from django.conf import settings
     node = django_do_translate(parser, token)
-    if not getattr(settings, 'LIVETRANSLATION', False):
-        return node
 
     def get_msgid(context):
         return node.filter_expression.resolve(context), u''
@@ -31,10 +36,7 @@ def do_translate(parser, token):
 django_do_block_translate = do_block_translate
 
 def do_block_translate(parser, token):
-    from django.conf import settings
     node = django_do_block_translate(parser, token)
-    if not getattr(settings, 'LIVETRANSLATION', False):
-        return node
 
     def get_msgid(context):
         return (node.render_token_list(node.singular)[0],

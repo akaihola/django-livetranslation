@@ -74,9 +74,14 @@ def insert_jquery_link(html):
 
 
 class LiveTranslationMiddleware:
+
+    def is_enabled(self, request):
+        return (getattr(settings, 'LIVETRANSLATION', False)
+                and request.session.get('livetranslation-enable'))
+
     def process_request(self, request):
-        if getattr(settings, 'LIVETRANSLATION', False):
-            initialize()
+        initialize()
+        if self.is_enabled(request):
             active_language = get_language()
             trans_real._active.clear()
             trans_real._translations.clear()
@@ -84,7 +89,7 @@ class LiveTranslationMiddleware:
             activate(active_language)
 
     def process_response(self, request, response):
-        if (getattr(settings, 'LIVETRANSLATION', False) and
+        if (self.is_enabled(request) and
             response['Content-Type'].split(';')[0] in _HTML_TYPES):
 
             if not find_jquery_link(response.content):
