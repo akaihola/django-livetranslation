@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'django-livetranslation',
-    version = '0.3',
+    version = '0.4dev',
     packages = ['livetranslation', 'livetranslation.templatetags'],
     author = 'Antti Kaihola',
     author_email = 'akaihol+django@ambitone.com',

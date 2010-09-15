@@ -1,18 +1,12 @@
 from django.templatetags.i18n import *
 import new
 
-from livetranslation.markup import mark_translation
-
-
-def is_enabled(context):
-    from django.conf import settings
-    return (getattr(settings, 'LIVETRANSLATION', False) and
-            context['request'].session.get('livetranslation-enable'))
+from livetranslation.markup import mark_translation, is_enabled
 
 
 def wrap_node(node, get_msgid):
     def new_render(self, context):
-        if not is_enabled(context):
+        if not is_enabled():
             return old_render(context)
         singular, plural = get_msgid(context)
         return mark_translation(singular, plural, old_render(context))

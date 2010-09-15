@@ -4,7 +4,7 @@ from django.utils.translation import get_language, activate, trans_real
 import gettext
 import re
 
-from livetranslation.markup import initialize, render_translations
+from livetranslation.markup import initialize, is_enabled, render_translations
 
 
 DEFAULT_JQUERY_PATTERN = r'.*/jquery(?:-[\d.]+)?(?:\.min)?\.js'
@@ -75,13 +75,13 @@ def insert_jquery_link(html):
 
 class LiveTranslationMiddleware:
 
-    def is_enabled(self, request):
+    def is_turned_on(self, request):
         return (getattr(settings, 'LIVETRANSLATION', False)
                 and request.session.get('livetranslation-enable'))
 
     def process_request(self, request):
-        initialize()
-        if self.is_enabled(request):
+        initialize(self.is_turned_on(request))
+        if is_enabled():
             active_language = get_language()
             trans_real._active.clear()
             trans_real._translations.clear()
@@ -89,7 +89,7 @@ class LiveTranslationMiddleware:
             activate(active_language)
 
     def process_response(self, request, response):
-        if (self.is_enabled(request) and
+        if (is_enabled() and
             response['Content-Type'].split(';')[0] in _HTML_TYPES):
 
             if not find_jquery_link(response.content):

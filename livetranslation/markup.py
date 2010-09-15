@@ -4,8 +4,14 @@ import re
 import threading
 
 
-def initialize():
-    _thread_locals.livetranslation = {'items': {}}
+def initialize(enabled=False):
+    _thread_locals.livetranslation = {'items': {},
+                                      'enabled': enabled}
+
+
+def is_enabled():
+    return (getattr(_thread_locals, 'livetranslation', {})
+            .get('enabled', False))
 
 
 _thread_locals = threading.local()
