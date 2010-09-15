@@ -88,7 +88,6 @@
         .click(function() { dom.popup.hide(); });
 
     theform = $('#' + id.form, dom.popup).submit(function() {
-        console.debug($(this).serialize());
         $.post('/livetranslation/',
                $(this).serialize());
         return false; });
