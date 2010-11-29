@@ -56,21 +56,20 @@ def find_jquery_link(html):
     return re.search(pattern, html, re.I)
 
 
-def insert_jquery_link(html):
+def insert_jquery_link(html, jquery=True):
     """Insert a jQuery <script src=> link into <head> of the HTML code"""
     pattern, jquery_url = process_jquery_setting()
     plugin_url = getattr(settings, 'LIVETRANSLATION_PLUGIN_URL',
                          DEFAULT_PLUGIN_URL)
     css_url = getattr(settings, 'LIVETRANSLATION_CSS_URL',
                       DEFAULT_CSS_URL)
-    return re.sub(
-        r'<head>',
-        '<head>'
-        '<script type="text/javascript" src="%s"></script>'
-        '<script type="text/javascript" src="%s"></script>'
-        '<link rel="stylesheet" type="text/css" href="%s"/>'
-        % (jquery_url, plugin_url, css_url),
-        html)
+    insert = [
+        ('<script type="text/javascript" src="%s"></script>' % jquery_url)
+        if jquery else '',
+        '<script type="text/javascript" src="%s"></script>' % plugin_url,
+        '<link rel="stylesheet" type="text/css" href="%s"/>' % css_url,
+        '<head>']
+    return re.sub(r'</head>', ''.join(insert), html)
 
 
 class LiveTranslationMiddleware:
@@ -92,8 +91,9 @@ class LiveTranslationMiddleware:
         if (is_enabled() and
             response['Content-Type'].split(';')[0] in _HTML_TYPES):
 
-            if not find_jquery_link(response.content):
-                response.content = insert_jquery_link(response.content)
+            jquery_found = find_jquery_link(response.content)
+            response.content = insert_jquery_link(response.content,
+                                                  not jquery_found)
             response.content = render_translations(
                 response.content.decode('UTF-8')).encode('UTF-8')
             if response.get('Content-Length', None):
